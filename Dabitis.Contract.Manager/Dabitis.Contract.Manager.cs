@@ -73,6 +73,5 @@ namespace Dabitis.Contract.Manager
             return results.ToString();
         }
         
-
     }
 }
