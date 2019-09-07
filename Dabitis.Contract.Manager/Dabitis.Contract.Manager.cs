@@ -43,7 +43,7 @@ namespace Dabitis.Contract.Manager
                 else
                 {
                     var sResult = owsDSQ.getParameters();
-                    AuxDoc.Load(AssemblyDirectory + "\\XSLParamertersToXmlJsonBase.xslt");
+                    AuxDoc.Load(AssemblyDirectory + Path.DirectorySeparatorChar + "XSLParamertersToXmlJsonBase.xslt");
                     AuxDoc.LoadXml(TransformXML(sResult, AuxDoc.OuterXml.ToString() ));
                 }
 
