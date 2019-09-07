@@ -36,6 +36,7 @@ namespace Microsoft.Extensions.DependencyInjection
             XmlServiceDocument.LoadXml (owsDSQ.getParameters());
             string verb = "";
             System.Xml.XmlNode AuxXmlNode;
+            _registeredEndpoints.Add(new Endpoint("reservedGetApiCatalogEndPoint", "GET", new PathString("/reservedGetApiCatalogEndPoint"), typeof(EndpointHandler)));
             foreach (System.Xml.XmlNode oNode in XmlServiceDocument.SelectNodes("//ROOT/*"))
             {
 

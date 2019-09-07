@@ -1,52 +1,78 @@
-﻿using System;
-using System.Data.Common;
-using System.Data.OleDb;
-using System.Xml;
+﻿using System.Xml;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
-//using SqlDataManager;
-using Microsoft.Extensions;
-using Microsoft.Extensions.Configuration;
-using System.Text;
 using wsDSQ;
-
+using System.Xml.Xsl;
+using System.IO;
 
 namespace Dabitis.Contract.Manager
 {
     public class SqlProccesMessage
     {
+        private string AssemblyDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", "");
         public XmlDocument ProccesMessage(ref XmlDocument doc, ref HttpContext context)
         {
-            //SqlDataManager.oSqlSpExecute oSql = null;
-            
-            //String sPath = Server.MapPath(".");
             XmlDocument AuxDoc = new XmlDocument();
-            //AuxDoc.Load(appServiceFileName);
-            //oSql = new oSqlSpExecute();
-            //oSql.appServiceFileName = appServiceFileName;
-            //oSql.appLogFileName = AuxDoc.SelectSingleNode("//@logPath").InnerText + "\\Dabitis" + DateTime.Now.ToString("YYYYMMdd")+ ".log";
-            //wsDataServiceQuerySoapClient.EndpointConfiguration epc = new wsDataServiceQuerySoapClient.EndpointConfiguration();
+			wsDSQ.wsDataServiceQuerySoapClient owsDSQ = null;
+            string endPointName = context.Request.Path.ToString().Replace("/", "");
+                                            
 
-            wsDSQ.wsDataServiceQuerySoapClient owsDSQ = new wsDSQ.wsDataServiceQuerySoapClient(wsDataServiceQuerySoapClient.EndpointConfiguration.wsDataServiceQuerySoap12);
-            
-            AuxDoc.LoadXml("<ROOT>" +
-                "<RECORD>" +
-                "<SERVICE_NAME>" + 
-                context.Request.Path.ToString().Replace("/", "") +
-                "</SERVICE_NAME>" +
-                doc.SelectSingleNode("//DATA").InnerXml.ToString() +
-                "</RECORD >" +
-                "</ROOT>"); ;
-            var sResult = owsDSQ.getDataMessage(AuxDoc.InnerXml);
+            try
+			{
+				
+			    owsDSQ = new wsDSQ.wsDataServiceQuerySoapClient(wsDataServiceQuerySoapClient.EndpointConfiguration.wsDataServiceQuerySoap12);
+                if (endPointName != "reservedGetApiCatalogEndPoint")
+                {
+                    AuxDoc.LoadXml("<ROOT>" +
+                        "<RECORD>" +
+                        "<SERVICE_NAME>" +
+                        endPointName +
+                        "</SERVICE_NAME>" +
+                        doc.SelectSingleNode("//DATA").InnerXml.ToString() +
+                        "</RECORD >" +
+                        "</ROOT>"); ;
+                    var sResult = owsDSQ.getDataMessage(AuxDoc.InnerXml);
 
-            /*oSqlSpExecute.logLevel ologLevel;
-            ologLevel = oSqlSpExecute.logLevel.high;
-            oSql.appLogLevel = ologLevel;
-            oSql.conectar();*/
-            //return (oSql.getXMLQuery(ref sXmlMessage));
-            AuxDoc.LoadXml(sResult);
-            return AuxDoc; 
+                    /*oSqlSpExecute.logLevel ologLevel;
+                    ologLevel = oSqlSpExecute.logLevel.high;
+                    oSql.appLogLevel = ologLevel;
+                    oSql.conectar();*/
+                    //return (oSql.getXMLQuery(ref sXmlMessage));
+                    AuxDoc.LoadXml(sResult);
+                }
+                else
+                {
+                    var sResult = owsDSQ.getParameters();
+                    AuxDoc.Load(AssemblyDirectory + "\\XSLParamertersToXmlJsonBase.xslt");
+                    AuxDoc.LoadXml(TransformXML(sResult, AuxDoc.OuterXml.ToString() ));
+                }
+
+            }
+			catch (System.Exception oExc)
+			{
+                AuxDoc.LoadXml("<NORESULT resultCode='-1' description='" + System.Security.SecurityElement.Escape(oExc.Message) + "'/>"); 
+			}
+			finally
+			{
+				
+			}
+            return AuxDoc;
         }
+        public static string TransformXML(string inputXml, string xsltString)
+        {
+            XslCompiledTransform transform = new XslCompiledTransform();
+            using (XmlReader reader = XmlReader.Create(new StringReader(xsltString)))
+            {
+                transform.Load(reader);
+            }
+            StringWriter results = new StringWriter();
+            using (XmlReader reader = XmlReader.Create(new StringReader(inputXml)))
+            {
+                transform.Transform(reader, null, results);
+            }
+            return results.ToString();
+        }
+        
 
-         
     }
 }
