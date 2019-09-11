@@ -17,10 +17,4 @@
     <ProjectReference Include="..\dynapi.poc.apigen\dynapi.poc.apigen.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="XSLParamertersToXmlJsonBase.xslt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

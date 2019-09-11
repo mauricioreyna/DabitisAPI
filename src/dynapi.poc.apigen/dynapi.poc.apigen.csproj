@@ -26,10 +26,4 @@
     <Folder Include="Connected Services\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="XSLParamertersToXmlJsonBase.xslt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
