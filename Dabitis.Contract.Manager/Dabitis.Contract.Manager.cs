@@ -9,7 +9,7 @@ namespace Dabitis.Contract.Manager
 {
     public class SqlProccesMessage
     {
-        private string AssemblyDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", "");
+        private string AssemblyDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:"+ Path.DirectorySeparatorChar, "");
         public XmlDocument ProccesMessage(ref XmlDocument doc, ref HttpContext context)
         {
             XmlDocument AuxDoc = new XmlDocument();
