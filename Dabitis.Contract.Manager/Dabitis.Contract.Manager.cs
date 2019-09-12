@@ -4,12 +4,16 @@ using Microsoft.AspNetCore.Http;
 using wsDSQ;
 using System.Xml.Xsl;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Dabitis.Contract.Manager
 {
     public class SqlProccesMessage
     {
-        private string AssemblyDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:"+ Path.DirectorySeparatorChar, "");
+
+        //private string AssemblyDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:"+ Path.DirectorySeparatorChar, "");
+        //private string AssemblyDirectory = GetApplicationRoot();
+        private string AssemblyDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
         public XmlDocument ProccesMessage(ref XmlDocument doc, ref HttpContext context)
         {
             XmlDocument AuxDoc = new XmlDocument();
@@ -73,6 +77,15 @@ namespace Dabitis.Contract.Manager
             return results.ToString();
         }
         
+        static string GetApplicationRoot()
+        {
+            var exePath = Path.GetDirectoryName(System.Reflection
+                              .Assembly.GetExecutingAssembly().CodeBase);
+            Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
+            var appRoot = appPathMatcher.Match(exePath).Value;
+            return appRoot;
+        }
+
 
     }
 }
