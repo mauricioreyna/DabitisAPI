@@ -81,15 +81,15 @@ namespace Dabitis.Contract.Manager
         static string GetApplicationRoot()
         {
             var appRoot = "";
-            if (System.Runtime.InteropServices.RuntimeInformation
-                                               .IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-            {
+            //if (System.Runtime.InteropServices.RuntimeInformation
+            //                                   .IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            //{
                 appRoot = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-            }
+            /*}
             else
             {
                 appRoot = System.Reflection.Assembly.GetEntryAssembly().Location;
-            }
+            }*/
 
             
             return appRoot;
