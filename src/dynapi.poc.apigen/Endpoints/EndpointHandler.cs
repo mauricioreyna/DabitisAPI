@@ -19,7 +19,7 @@ namespace dynapi.poc.apigen.Endpoints
 
         private const string JsonContent = "application/json";
         private Dabitis.Contract.Manager.SqlProccesMessage _SqlProccesMessage = new Dabitis.Contract.Manager.SqlProccesMessage();
-        private static string appPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", "");
+        //private static string appPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", "");
         #endregion
 
         #region Worker process
