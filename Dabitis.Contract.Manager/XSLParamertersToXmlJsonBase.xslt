@@ -31,11 +31,11 @@
          </description>
 
          <data>
-            <xsl:for-each select="PARAMETERS_LIST/PARAMETER">
+            <xsl:for-each select="PARAMETERS_LIST/PARAMETER[not(@RESERVED)]">
                <xsl:element name="{text()}">
                   <xsl:value-of select="@TYPE" />
 
-                  <xsl:if test="@TYPE">(optional)</xsl:if>
+                  <xsl:if test="@DEFAULT">(optional)</xsl:if>
                </xsl:element>
             </xsl:for-each>
          </data>

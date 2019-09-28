@@ -625,9 +625,9 @@ namespace Dabitis.Sql.DataManager
                 oXmlStructureMessage = new XmlDocument();
                 oXmlStructureMessage.LoadXml(strXML);
 
-                if (this._llevel > logLevel.medium)
+                /*if (this._llevel > logLevel.medium)
                     this._IOLog.recordLogLine("Mensaje JSON:" + JsonConvert.SerializeXmlNode(oXmlStructureMessage));
-
+                */
                 //Determino si existe una instrucción de plantilla de transformaciónd de entrada
                 bHasInputTemplate = (oXmlStructureMessage.SelectSingleNode("*/@input-template-name") != null
                     && oXmlStructureMessage.SelectSingleNode("*/@input-template-name").InnerText.Trim().Length > 0
@@ -677,8 +677,8 @@ namespace Dabitis.Sql.DataManager
                     this._oException.addMsg("No se pudo serializar mensaje de respuesta", sStep);
                     oXmlStructureMessage.LoadXml(sReturn);
 
-                    this._IOLog.recordLogLine("Respuesta:" + Regex.Replace(sReturn, @"\r\n?|\n", "").ToString());
-                    this._IOLog.recordLogLine("Respuesta JSON: " + JsonConvert.SerializeXmlNode(oXmlStructureMessage));
+                    //this._IOLog.recordLogLine("Respuesta:" + Regex.Replace(sReturn, @"\r\n?|\n", "").ToString());
+                    //this._IOLog.recordLogLine("Respuesta JSON: " + JsonConvert.SerializeXmlNode(oXmlStructureMessage));
 
 
                 }
