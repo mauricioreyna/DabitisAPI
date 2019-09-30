@@ -20,11 +20,13 @@
    </xsl:template>
 
    <xsl:template match="RECORD">
-      <xsl:apply-templates select="TEXT" />
+      <xsl:apply-templates select="TEXT" >
+      	<xsl:with-param name="position"><xsl:value-of select="position()" /></xsl:with-param>
+      </xsl:apply-templates>
    </xsl:template>
 
    <xsl:template match="TEXT">
-      <xsl:value-of select="." />
+		<xsl:param name = "position" />
+		Line <xsl:value-of select="$position" />:<xsl:value-of select="." /><xsl:text>&#xD;&#xA;</xsl:text>
    </xsl:template>
 </xsl:stylesheet>
-
