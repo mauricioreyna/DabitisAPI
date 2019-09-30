@@ -28,8 +28,14 @@ namespace Dabitis.Contract.Manager
 
 				if (endPointName != "reservedGetApiCatalogEndPoint")
 				{
-					sXmlMessage= "<ROOT>" +
-					"<RECORD>" +
+                    sXmlMessage = "<ROOT>" +
+                    "<RECORD";
+                    foreach (XmlAttribute AuxXmlAttribute in doc.SelectSingleNode("//DATA").Attributes)
+                    {
+                        sXmlMessage += " " + AuxXmlAttribute.Name + "='" + AuxXmlAttribute.Value + "' ";
+
+                    }
+                    sXmlMessage += ">" +
 					"<SERVICE_NAME>" +
 					endPointName +
 					"</SERVICE_NAME>" +

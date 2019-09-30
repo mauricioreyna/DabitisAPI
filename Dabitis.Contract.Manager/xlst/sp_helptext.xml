@@ -1,0 +1,865 @@
+<ROOT>
+   <TABLES resultCode="0" service_name="HELPTEXT" lastSQlStatement="declare @return int ;execute @return=master..[sp_helptext] @objname='sp_helptext';select returnValue= @return">
+      <TABLE>
+         <RECORD>
+            <TEXT>create procedure sys.sp_helptext</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>@objname nvarchar(776)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,@columnname sysname = NULL</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>as</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>set nocount on</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>declare @dbname sysname</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,@objid int</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,@BlankSpaceAdded int</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,@BasePos int</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,@CurrentPos int</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,@TextLength int</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,@LineId int</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,@AddOnLen int</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,@LFCR int --lengths of line feed carriage return</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,@DefinedLength int</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>/* NOTE: Length of @SyscomText is 4000 to replace the length of</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>** text column in syscomments.</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>** lengths on @Line, #CommentText Text column and</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>** value for @DefinedLength are all 255. These need to all have</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>** the same values. 255 was selected in order for the max length</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>** display using down level clients</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>*/</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,@SyscomText nvarchar(4000)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,@Line nvarchar(255)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @DefinedLength = 255</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @BlankSpaceAdded = 0 /*Keeps track of blank spaces at end of lines. Note Len function ignores</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>trailing blank spaces*/</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>CREATE TABLE #CommentText</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>(LineId int</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>,Text nvarchar(255) collate catalog_default)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>/*</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>** Make sure the @objname is local to the current database.</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>*/</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @dbname = parsename(@objname,3)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>if @dbname is null</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @dbname = db_name()</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>else if @dbname &lt;&gt; db_name()</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>raiserror(15250,-1,-1)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>return (1)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>/*</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>** See if @objname exists.</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>*/</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @objid = object_id(@objname)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>if (@objid is null)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>raiserror(15009,-1,-1,@objname,@dbname)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>return (1)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>-- If second parameter was given.</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>if ( @columnname is not null)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>-- Check if it is a table</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>if (select count(*) from sys.objects where object_id = @objid and type in ('S ','U ','TF'))=0</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>raiserror(15218,-1,-1,@objname)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>return(1)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>-- check if it is a correct column name</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>if ((select 'count'=count(*) from sys.columns where name = @columnname and object_id = @objid) =0)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>raiserror(15645,-1,-1,@columnname)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>return(1)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>if (ColumnProperty(@objid, @columnname, 'IsComputed') = 0)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>raiserror(15646,-1,-1,@columnname)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>return(1)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>declare ms_crs_syscom CURSOR LOCAL</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>FOR select text from syscomments where id = @objid and encrypted = 0 and number =</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>(select column_id from sys.columns where name = @columnname and object_id = @objid)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>order by number,colid</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>FOR READ ONLY</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>else if @objid &lt; 0 -- Handle system-objects</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>-- Check count of rows with text data</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>if (select count(*) from master.sys.syscomments where id = @objid and text is not null) = 0</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>raiserror(15197,-1,-1,@objname)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>return (1)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>declare ms_crs_syscom CURSOR LOCAL FOR select text from master.sys.syscomments where id = @objid</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>ORDER BY number, colid FOR READ ONLY</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>else</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>/*</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>** Find out how many lines of text are coming back,</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>** and return if there are none.</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>*/</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>if (select count(*) from syscomments c, sysobjects o where o.xtype not in ('S', 'U')</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>and o.id = c.id and o.id = @objid) = 0</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>raiserror(15197,-1,-1,@objname)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>return (1)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>if (select count(*) from syscomments where id = @objid and encrypted = 0) = 0</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>raiserror(15471,-1,-1,@objname)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>return (0)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>declare ms_crs_syscom CURSOR LOCAL</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>FOR select text from syscomments where id = @objid and encrypted = 0</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>ORDER BY number, colid</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>FOR READ ONLY</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>/*</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>** else get the text.</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>*/</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @LFCR = 2</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @LineId = 1</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>OPEN ms_crs_syscom</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>FETCH NEXT from ms_crs_syscom into @SyscomText</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>WHILE @@fetch_status &gt;= 0</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @BasePos = 1</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @CurrentPos = 1</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @TextLength = LEN(@SyscomText)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>WHILE @CurrentPos != 0</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>--Looking for end of line followed by carriage return</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @CurrentPos = CHARINDEX(char(13)+char(10), @SyscomText, @BasePos)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>--If carriage return found</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>IF @CurrentPos != 0</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>/*If new value for @Lines length will be &gt; then the</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>**set length then insert current contents of @line</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>**and proceed.</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>*/</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>while (isnull(LEN(@Line),0) + @BlankSpaceAdded + @CurrentPos-@BasePos + @LFCR) &gt; @DefinedLength</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @AddOnLen = @DefinedLength-(isnull(LEN(@Line),0) + @BlankSpaceAdded)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>INSERT #CommentText VALUES</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>( @LineId,</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>isnull(@Line, N'') + isnull(SUBSTRING(@SyscomText, @BasePos, @AddOnLen), N''))</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @Line = NULL, @LineId = @LineId + 1,</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>@BasePos = @BasePos + @AddOnLen, @BlankSpaceAdded = 0</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @Line = isnull(@Line, N'') + isnull(SUBSTRING(@SyscomText, @BasePos, @CurrentPos-@BasePos + @LFCR), N'')</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @BasePos = @CurrentPos+2</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>INSERT #CommentText VALUES( @LineId, @Line )</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @LineId = @LineId + 1</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @Line = NULL</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>else</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>--else carriage return not found</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>IF @BasePos &lt;= @TextLength</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>/*If new value for @Lines length will be &gt; then the</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>**defined length</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>*/</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>while (isnull(LEN(@Line),0) + @BlankSpaceAdded + @TextLength-@BasePos+1 ) &gt; @DefinedLength</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @AddOnLen = @DefinedLength - (isnull(LEN(@Line),0) + @BlankSpaceAdded)</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>INSERT #CommentText VALUES</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>( @LineId,</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>isnull(@Line, N'') + isnull(SUBSTRING(@SyscomText, @BasePos, @AddOnLen), N''))</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @Line = NULL, @LineId = @LineId + 1,</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>@BasePos = @BasePos + @AddOnLen, @BlankSpaceAdded = 0</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @Line = isnull(@Line, N'') + isnull(SUBSTRING(@SyscomText, @BasePos, @TextLength-@BasePos+1 ), N'')</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>if LEN(@Line) &lt; @DefinedLength and charindex(' ', @SyscomText, @TextLength+1 ) &gt; 0</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>begin</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select @Line = @Line + ' ', @BlankSpaceAdded = 1</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>FETCH NEXT from ms_crs_syscom into @SyscomText</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>end</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>IF @Line is NOT NULL</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>INSERT #CommentText VALUES( @LineId, @Line )</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>select Text from #CommentText order by LineId</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>CLOSE ms_crs_syscom</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>DEALLOCATE ms_crs_syscom</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>DROP TABLE #CommentText</TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>
+            </TEXT>
+         </RECORD>
+
+         <RECORD>
+            <TEXT>return (0) -- sp_helptext</TEXT>
+         </RECORD>
+      </TABLE>
+   </TABLES>
+</ROOT>
+

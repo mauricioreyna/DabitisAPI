@@ -37,6 +37,9 @@
     <None Update="services.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TextToNodeSpHelpText.xslt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="XSLParamertersToXmlJsonBase.xslt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

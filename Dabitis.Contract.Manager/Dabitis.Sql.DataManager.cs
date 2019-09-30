@@ -601,6 +601,7 @@ namespace Dabitis.Sql.DataManager
         public string getXMLQuery(ref string strXML, ref string pRootName) //pRootName no implementado
         {
             XmlDocument oXmlStructureMessage = null;
+            XmlDocument oXmlResponseMessage = null;
             XmlNode oXmlNodeMessage = null;
             XslCompiledTransform oXslCompiledTransform = null;
             bool bHasInputTemplate = false;
@@ -633,8 +634,8 @@ namespace Dabitis.Sql.DataManager
                     && oXmlStructureMessage.SelectSingleNode("*/@input-template-name").InnerText.Trim().Length > 0
                     );
                 //Determino si existe una instrucción de plantilla de transformaciónd de salida
-                bHasOutputTemplate = (oXmlStructureMessage.SelectSingleNode("*/@output-template-name") != null
-                    && oXmlStructureMessage.SelectSingleNode("*/@output-template-name").InnerText.Trim().Length > 0
+                bHasOutputTemplate = (oXmlStructureMessage.SelectSingleNode("//@output-template-name") != null
+                    && oXmlStructureMessage.SelectSingleNode("//@output-template-name").InnerText.Trim().Length > 0
                     );
 
                 //Determino si existe una instrucción de cambio de raíz
@@ -671,18 +672,36 @@ namespace Dabitis.Sql.DataManager
                     sReturn = createMultipleExecuteInstruction(ref oXmlStructureMessage);
                 }
 
-                if (this._llevel > logLevel.medium)
+                sStep = this.sStep;
+                this._oException.addMsg("Error al cargar documento de respuesta", sStep);
+                oXmlResponseMessage = new XmlDocument();
+                oXmlResponseMessage.LoadXml(sReturn);
+
+/*                if (this._llevel > logLevel.medium)
                 {
                     sStep = this.sStep;
-                    this._oException.addMsg("No se pudo serializar mensaje de respuesta", sStep);
-                    oXmlStructureMessage.LoadXml(sReturn);
-
-                    //this._IOLog.recordLogLine("Respuesta:" + Regex.Replace(sReturn, @"\r\n?|\n", "").ToString());
-                    //this._IOLog.recordLogLine("Respuesta JSON: " + JsonConvert.SerializeXmlNode(oXmlStructureMessage));
+                    this._oException.addMsg("No se pudo serializar mensaje de respuesta", sStep);  
+                    this._IOLog.recordLogLine("Respuesta:" + Regex.Replace(sReturn, @"\r\n?|\n", "").ToString());
+                    this._IOLog.recordLogLine("Respuesta JSON: " + JsonConvert.SerializeXmlNode(oXmlStructureMessage));
 
 
                 }
-
+                */
+                if (bHasOutputTemplate)
+                {
+                    oXmlResponseMessage = new XmlDocument();
+                    sStep = this.sStep;
+                    this._oException.addMsg("Error al cargar la plantilla de Salida", sStep);
+                    sFileTemplateName = this.appDirectoryTemplate + Path.DirectorySeparatorChar + ""
+                        + oXmlStructureMessage.SelectSingleNode("//@output-template-name").InnerText
+                        + ".xslt";
+                    if (this._llevel > logLevel.medium)
+                        this._IOLog.recordLogLine("Aplicando plantilla de Salida:" + sFileTemplateName);
+                    oXslCompiledTransform.Load(sFileTemplateName);
+                    //Transformo y recargo el DOM
+                    oXmlStructureMessage.LoadXml(XmlTransformInMemory(ref oXslCompiledTransform, ref sReturn));
+                    sReturn = oXmlStructureMessage.OuterXml;
+                }
 
                 return sReturn;
             }

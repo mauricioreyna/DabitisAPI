@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<COOKTOP>
+	<XMLDOC url="Z:\mreyna\Notebook\d\Dropbox\Desarrollo\DotNet\dynapp.poc-master\Dabitis.Contract.Manager\xlst\sp_helptext.xml">
+		<SCHEMAS>
+		</SCHEMAS>
+	</XMLDOC>
+	<XSLDOC url="Z:\mreyna\Notebook\d\Dropbox\Desarrollo\DotNet\dynapp.poc-master\Dabitis.Contract.Manager\TextToNodeSpHelpText.xslt">
+		<SCHEMAS>
+		</SCHEMAS>
+	</XSLDOC>
+	<OPTIONS diredit="" includeurl="" httpserver="" frames="" cooktop.includeurl="0" cooktop.httpserver="" cooktop.frames="0"/>
+	<XSLT-PARAMS/>
+</COOKTOP>
