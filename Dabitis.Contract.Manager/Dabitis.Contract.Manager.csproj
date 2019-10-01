@@ -43,6 +43,10 @@
     <None Update="XSLParamertersToXmlJsonBase.xslt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="dataClient.xslt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    
   </ItemGroup>
 
 </Project>
