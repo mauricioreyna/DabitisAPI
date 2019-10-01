@@ -115,7 +115,7 @@ STRING_CONNECTION = Cadena de conexion a la base de datos
 	<PARAMETERS_LIST>
 	</PARAMETERS_LIST>
 		<COMMENT>
-	Get Clients & Accounts
+	Get Clients &amp; Accounts
 		</COMMENT>
 
 </APIPROCCESSCLIENTSGET>	
