@@ -111,7 +111,7 @@ STRING_CONNECTION = Cadena de conexion a la base de datos
 		Update Client
 	</COMMENT>
 </APIPROCCESSCLIENTUPDATE>
-<APIPROCCESSCLIENTSGET SP_NAME="mauricioreyna..[apiproccessclientsget]">
+<APIPROCCESSCLIENTSGET SP_NAME="mauricioreyna..[apiproccessclientsget]" VERB="GET" >
 	<PARAMETERS_LIST>
 	</PARAMETERS_LIST>
 		<COMMENT>
