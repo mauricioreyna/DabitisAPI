@@ -2,9 +2,9 @@
 <!--
 Referencias.
 SP_NAME = Nombre del store procedure a invocar
-IDQUERY(YES/NO)= Indica si es un instrucciÛn de tipo consulta o es insert, delete o update
+IDQUERY(YES/NO)= Indica si es un instrucci√≥n de tipo consulta o es insert, delete o update
 PARAMETERS_LIST = Lista de parametros a utilizar en el llamado al sp.
-PARAMETER = Nombre del parametros que recibe el store, el orden en que esten declarados ser· el orden en que se armar· el llamado al sp.
+PARAMETER = Nombre del parametros que recibe el store, el orden en que esten declarados ser√° el orden en que se armar√° el llamado al sp.
 STRING_CONNECTION = Cadena de conexion a la base de datos
 -->
 <ROOT>
@@ -25,8 +25,8 @@ STRING_CONNECTION = Cadena de conexion a la base de datos
 		<PARAMETER TYPE="VARCHAR" TYPEMODE="1" FIELD="DateReport" PRESICION="16">DATEREPORT</PARAMETER>
 	</PARAMETERS_LIST>
 	<COMMENT>
-		Este servicio provee informaciÛn referente a las ventas de los empleados por paÌs.<br/>
-		Posee dos par·metros de entrada:<br/>
+		Este servicio provee informaci√≥n referente a las ventas de los empleados por pa√≠s.<br/>
+		Posee dos par√°metros de entrada:<br/>
 		<img src="Content/img/param.gif"/><b>FECHA_DE_COMIENZO</b><br/>
 		<img src="Content/img/param.gif"/><b>FECHA_DE_FIN</b><br/>
 		FECHA_DE_FIN nunca debe superior a cuatros meses respecto a FECHA_DE_COMIENZO.<br/>
@@ -57,7 +57,7 @@ STRING_CONNECTION = Cadena de conexion a la base de datos
 </HELPTEXT> 
 
 			
-        <!--Modelo de parametrizaciÛn SqlDataManager.dll-->
+        <!--Modelo de parametrizaci√≥n SqlDataManager.dll-->
 <APIPROCCESSCLIENTCREATE SP_NAME="[apiproccessclient]" VERB="POST">
 	<PARAMETERS_LIST>
 		<PARAMETER TYPE="VARCHAR" TYPEMODE="0" FIELD="addressStreet">ADDRESSSTREET</PARAMETER>
@@ -111,7 +111,14 @@ STRING_CONNECTION = Cadena de conexion a la base de datos
 		Update Client
 	</COMMENT>
 </APIPROCCESSCLIENTUPDATE>
- 			
+<APIPROCCESSCLIENTSGET SP_NAME="mauricioreyna..[apiproccessclientsget]">
+	<PARAMETERS_LIST>
+	</PARAMETERS_LIST>
+		<COMMENT>
+	Get Clients & Accounts
+		</COMMENT>
+
+</APIPROCCESSCLIENTSGET>	
 			
 
 
