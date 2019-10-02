@@ -57,7 +57,6 @@ STRING_CONNECTION = Cadena de conexion a la base de datos
 </HELPTEXT> 
 
 			
-<!--
 <APIPROCCESSCLIENTCREATE SP_NAME="[apiproccessclient]" VERB="POST">
 	<PARAMETERS_LIST>
 		<PARAMETER TYPE="VARCHAR" TYPEMODE="0" FIELD="addressStreet">ADDRESSSTREET</PARAMETER>
@@ -120,7 +119,6 @@ STRING_CONNECTION = Cadena de conexion a la base de datos
 
 </APIPROCCESSCLIENTSGET>	
 			
--->
 
 
 </ROOT>
